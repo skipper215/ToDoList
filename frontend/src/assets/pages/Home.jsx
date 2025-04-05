@@ -1,22 +1,53 @@
 import MovieCard from "../../components/MovieCard"
-import { useState } from "react"
+import {searchMovies, getPopularMovies} from "../../services/api"
 import "../../css/Home.css"
+import { useState, useEffect } from "react";
 
 function Home() {
-    const movies = [
-        {id: 1, title: "John Wick", releaseDate: "2023"},
-        {id: 2, title: "Smurfs", releaseDate: "2013"},
-        {id: 3, title: "The Avengers", releaseDate: "2022"}
-    ]
+    
 
     const [searchQuery, setSearchQuery] = useState("") 
     //searchQuery is the state 
     // setSearchQuery changes state 
+    const [movies, setMovies] = useState([]) //array of movies
+    const [error, setError] = useState(null)
+    const [loading, setLoading] = useState(true) //loading is true for now
+
+    useEffect(() => {
+        const loadPopularMovies = async () => {
+            try {
+                const popularMovies = await getPopularMovies()
+                setMovies(popularMovies)
+            } catch (err) {
+                console.log(err)
+                setError("Failed to load movies...")
+            }
+            finally {
+                setLoading(false) 
+            }
+        }
+
+        loadPopularMovies()
+    }, [])
     
-    const handleSearch = (e) => {
+    const handleSearch = async (e) => {
         e.preventDefault() //prevents default refresh of page 
-        alert(searchQuery)
-        setSearchQuery("") //sets to empty after search
+        if(!searchQuery.trim()) return
+        if(loading) return
+
+        setLoading(true)
+        try {
+            const searchResults = await searchMovies(searchQuery)
+            setMovies(searchResults)
+            setError(null)
+        } catch(err) {
+            console.log(err)
+        } finally {
+            setLoading(false)
+        }
+
+
+        //setSearchQuery("") //sets to empty after search
     }
 
     return <div className="home">
