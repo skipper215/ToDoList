@@ -4,7 +4,7 @@ import "../../css/Home.css"
 import { useState, useEffect } from "react";
 
 function Home() {
-    
+
 
     const [searchQuery, setSearchQuery] = useState("") 
     //searchQuery is the state 
@@ -13,7 +13,7 @@ function Home() {
     const [error, setError] = useState(null)
     const [loading, setLoading] = useState(true) //loading is true for now
 
-    useEffect(() => {
+    useEffect(() => { //use effect occurs once instead of every re-run
         const loadMovies = async () => {
             try {
                 const currMovies = await getUpcoming()
@@ -62,14 +62,18 @@ function Home() {
             <button type="submit" className="search-button"> Search </button>
         </form>
 
+        {error && <div className="error-message">{error}</div>}
+        
+        {loading ? (
+        <div className="loading">Loading...</div>
+        ) : (
         <div className="movies-grid">
-            {movies.map(
-                (movie) => 
-                    movie.title.toLowerCase().startsWith(searchQuery) && 
-                    (<MovieCard movie={movie} key={movie.id} />)
-                )
-            }
+          {movies.map((movie) => (
+            <MovieCard movie={movie} key={movie.id} />
+          ))}
         </div>
+        )}
+
     </div>
 }
 
