@@ -1,5 +1,5 @@
 import MovieCard from "../../components/MovieCard"
-import {searchMovies, getPopularMovies} from "../../services/api"
+import {searchMovies, getPopularMovies, getTopRated, getUpcoming} from "../../services/api"
 import "../../css/Home.css"
 import { useState, useEffect } from "react";
 
@@ -14,10 +14,10 @@ function Home() {
     const [loading, setLoading] = useState(true) //loading is true for now
 
     useEffect(() => {
-        const loadPopularMovies = async () => {
+        const loadMovies = async () => {
             try {
-                const popularMovies = await getPopularMovies()
-                setMovies(popularMovies)
+                const currMovies = await getUpcoming()
+                setMovies(currMovies)
             } catch (err) {
                 console.log(err)
                 setError("Failed to load movies...")
@@ -27,7 +27,7 @@ function Home() {
             }
         }
 
-        loadPopularMovies()
+        loadMovies()
     }, [])
     
     const handleSearch = async (e) => {
